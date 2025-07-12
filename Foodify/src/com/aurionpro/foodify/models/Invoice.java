@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class Invoice {
     private UUID id;
-    private UUID orderId;
+    private Order order;
     private UUID customerId;
     private double totalAmount;
     private double discountAmount;
@@ -17,10 +17,10 @@ public class Invoice {
     
     
     
-	public Invoice(UUID orderId, UUID customerId, double totalAmount, double discountAmount, double finalAmount,
+	public Invoice(Order order, UUID customerId, double totalAmount, double discountAmount, double finalAmount,
 			boolean isPaid, UUID paymentId) {
 		this.id = UUID.randomUUID();
-		this.orderId = orderId;
+		this.order = order;
 		this.customerId = customerId;
 		this.totalAmount = totalAmount;
 		this.discountAmount = discountAmount;
@@ -35,11 +35,11 @@ public class Invoice {
 	public void setId(UUID id) {
 		this.id = id;
 	}
-	public UUID getOrderId() {
-		return orderId;
+	public Order getOrder() {
+		return order;
 	}
-	public void setOrderId(UUID orderId) {
-		this.orderId = orderId;
+	public void setOrder(Order order) {
+		this.order = order;
 	}
 	public UUID getCustomerId() {
 		return customerId;
@@ -85,7 +85,7 @@ public class Invoice {
 	}
 	@Override
 	public String toString() {
-		return "Invoice [id=" + id + ", orderId=" + orderId + ", customerId=" + customerId + ", totalAmount="
+		return "Invoice [id=" + id + ", order=" + order + ", customerId=" + customerId + ", totalAmount="
 				+ totalAmount + ", discountAmount=" + discountAmount + ", finalAmount=" + finalAmount + ", isPaid="
 				+ isPaid + ", paymentId=" + paymentId + ", createdAt=" + createdAt + "]";
 	}

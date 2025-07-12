@@ -37,17 +37,23 @@ public class LineItem {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+
 	public double getDiscountPrice() {
 		return foodItem.getTotalDiscountPrice() * quantity;
 	}
-	
+
 	public double getTotalPrice() {
-		return foodItem.getPriceAfterDiscount()*quantity;
+		return foodItem.getPriceAfterDiscount() * quantity;
+	}
+
+	public double getOriginalLineItemPrice() {
+		return foodItem.getPrice()*quantity;
 	}
 
 	@Override
 	public String toString() {
-		return "LineItem [id=" + id + ", \n\t foodItem=" + foodItem + ",\n\t quantity=" + quantity + ",\n\t LineItemPrice=" + getTotalPrice()+ "\n]";
+		return "LineItem [id=" + id + ", \n\t foodItem=" + foodItem + ",\n\t quantity=" + quantity
+				+ ",\n\t LineItemPrice=" + getTotalPrice() + "\n]";
 	}
 
 }

@@ -17,6 +17,7 @@ import com.aurionpro.foodify.exceptions.FoodItemNotFoundException;
 import com.aurionpro.foodify.exceptions.OrderNotFoundException;
 import com.aurionpro.foodify.exceptions.UserNotFoundException;
 import com.aurionpro.foodify.interfaces.IPaymentType;
+import com.aurionpro.foodify.models.Address;
 import com.aurionpro.foodify.models.Customer;
 import com.aurionpro.foodify.models.FoodItem;
 import com.aurionpro.foodify.models.Invoice;
@@ -57,7 +58,7 @@ public class CustomerServices {
 			throw new CustomException("Cart is empty");
 
 //		currentOrder.getLineItems().forEach(System.out::println);
-		PrintDataInFormat.printCartTable(currentOrder.getLineItems());
+		PrintDataInFormat.printCartTable(currentOrder);
 		System.out.println("\n");
 
 	}
@@ -193,12 +194,40 @@ public class CustomerServices {
 		Order currentOrder = CustomerUtility.getCurrentOrder(currentUser);
 		if (currentOrder == null || currentOrder.getLineItems().isEmpty())
 			throw new OrderNotFoundException();
+		
+		
+		if(currentUser.getAdress() == null ) {
+			while(true) {
+				try {
+					System.out.println("Your profile dont have address, so please provide address to deliver the order");
+					System.out.println("Enter Area name");
+					String area = scanner.nextLine();
+					System.out.println("Enter Landmark name");
+					String landmark = scanner.nextLine();
+					System.out.println("Enter Postal code in numbers");
+					int postalCode = scanner.nextInt();
+					scanner.nextLine();
+					
+					Address address = new Address(area, landmark, postalCode);
+					currentUser.setAdress(address);
+					break;
+				} catch (Exception e) {
+					System.err.println("Wrong input value");
+				}
+				
+				
+			}
+		}
 
 //		payment
 		boolean isPaymnetProcessContinue = true;
 		IPaymentType paymentGateway = null;
 		while (isPaymnetProcessContinue) {
+			System.out.println("Total price: "+ (int)(currentOrder.getTotalDiscount()+currentOrder.getTotalPrice()));
+			System.out.println("Total Disount: " + currentOrder.getTotalDiscount());
+			System.out.println("Final Bill: "+ currentOrder.getTotalPrice());
 			System.out.println("Choose the payment gateway: \n1.Credit Card \n2.Upi payment \n3.Cash Payment");
+			
 			int paymentChoice = scanner.nextInt();
 			scanner.nextLine();
 
@@ -225,7 +254,7 @@ public class CustomerServices {
 		}
 
 //		Generate bill and invoice		
-		Invoice invoice = new Invoice(currentOrder.getId(), currentUser.getId(),
+		Invoice invoice = new Invoice(currentOrder, currentUser.getId(),
 				currentOrder.getTotalPrice() + currentOrder.getTotalDiscount(), currentOrder.getTotalDiscount(),
 				currentOrder.getTotalPrice(), true, null);
 		Payment paymentBill = new Payment(currentUser.getId(), invoice.getId(), currentOrder.getTotalPrice(),

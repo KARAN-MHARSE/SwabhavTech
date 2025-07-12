@@ -9,13 +9,12 @@ public class Address {
 	private int postalCode;
 	
 	
-	public Address(String area, String landmark, String city, String state, String country, int postalCode) {
-		super();
+	public Address(String area, String landmark, int postalCode) {
 		this.area = area;
 		this.landmark = landmark;
-		this.city = city;
-		this.state = state;
-		this.country = country;
+		this.city = "Mumbai";
+		this.state = "Maharashtra";
+		this.country = "India";
 		this.postalCode = postalCode;
 	}
 	

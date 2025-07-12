@@ -74,17 +74,22 @@ public class Order {
 	}
 	
 	public double getTotalPrice() {
-		double totalAmount = 0;
+		double totalAmountBeforeDiscount =0;
 		for(LineItem item : lineItems) {
-			totalAmount+= item.getTotalPrice();
+			totalAmountBeforeDiscount += item.getOriginalLineItemPrice();
 		}
-		return totalAmount;
+		return totalAmountBeforeDiscount-getTotalDiscount();
 	}
 	
 	public double getTotalDiscount() {
 		double discount = 0;
+		double totalAmountBeforeDiscount =0;
 		for(LineItem item: lineItems) {
 			discount+= item.getDiscountPrice();
+			totalAmountBeforeDiscount+= item.getOriginalLineItemPrice();
+		}
+		if(totalAmountBeforeDiscount >= 500) {
+			return discount+100;
 		}
 		return discount;
 	}

@@ -115,38 +115,44 @@ public class PrintDataInFormat {
 		return max;
 	}
 
-	public static void printCartTable(List<LineItem> cartItems) {
+	public static void printCartTable(Order order) {
+
+		double totalDiscount = order.getTotalDiscount();
+		double totalAmountAfterDiscount = order.getTotalPrice();
+		double totalAmountBeforeDiscount = totalDiscount + totalAmountAfterDiscount;
+		List<LineItem> cartItems = order.getLineItems();
+
 		String format = "| %-36s | %-20s | %-13s | %-8s | %-10s | %-12s | %-12s |\n";
 		String line = "+--------------------------------------+----------------------+---------------+----------+------------+--------------+--------------+";
 
 		System.out.println("🛒 Cart Items:");
 		System.out.println(line);
-		System.out.printf(format, "LineItem ID", "Food Name", "Food Type", "Qty", "Unit Price", "Disc. Price", "Total");
+		System.out.printf(format, "LineItem ID", "Food Name", "Food Type", "Qty", "Unit Price", "Discount", "Total");
 		System.out.println(line);
 
 		double grandTotal = 0.0;
 
 		for (LineItem item : cartItems) {
-		    String name = item.getFoodItem().getName();
-		    String type = item.getFoodItem().getFoodType().getClass().getSimpleName();
-		    double unitPrice = item.getFoodItem().getPrice();
-		    double discounted = item.getFoodItem().getPriceAfterDiscount();
-		    double total = item.getTotalPrice();
+			String name = item.getFoodItem().getName();
+			String type = item.getFoodItem().getFoodType().getClass().getSimpleName();
+			double unitPrice = item.getFoodItem().getPrice();
+			double discounted = item.getFoodItem().getTotalDiscountPrice();
+			double total = item.getTotalPrice();
 
-		    grandTotal += total;
+			grandTotal += total;
 
-		    System.out.printf(format, item.getId(), name, type, item.getQuantity(),
-		            String.format("%.2f", unitPrice),
-		            String.format("%.2f", discounted),
-		            String.format("%.2f", total));
+			System.out.printf(format, item.getId(), name, type, item.getQuantity(), String.format("%.2f", unitPrice),
+					String.format("%.2f", discounted), String.format("%.2f", total));
 		}
 
 		System.out.println(line);
 
-		// Print grand total aligned with last column
-		System.out.printf("| %-114s | %-12s |\n", "Grand Total", String.format("₹%.2f", grandTotal));
-		System.out.println(line);
+		// Add summary lines
+		System.out.printf("| %-114s | %-12s |\n", "Original Price", String.format("₹%.2f", totalAmountBeforeDiscount));
+		System.out.printf("| %-114s | %-12s |\n", "Total Discount", String.format("-₹%.2f", totalDiscount));
+		System.out.printf("| %-114s | %-12s |\n", "Grand Total", String.format("₹%.2f", totalAmountAfterDiscount));
 
+		System.out.println(line);
 	}
 
 	public static void printOrderSummaryTable(List<Order> orders) {
@@ -190,15 +196,29 @@ public class PrintDataInFormat {
 	}
 
 	public static void printInvoice(Invoice invoice) {
+		List<LineItem> items = invoice.getOrder().getLineItems();
+
 		System.out.println(BOX_LINE);
 		System.out.printf("|%s|\n", centerText("🧾 INVOICE", BOX_WIDTH));
 		System.out.println(BOX_LINE);
 
 		printKeyValue("Invoice ID", invoice.getId().toString());
-		printKeyValue("Order ID", invoice.getOrderId().toString());
+//  printKeyValue("Order ID", invoice.getOrder().toString());
 		printKeyValue("Customer ID", invoice.getCustomerId().toString());
 		printKeyValue("Payment ID", invoice.getPaymentId().toString());
 		printKeyValue("Date", invoice.getCreatedAt().toString());
+
+		System.out.println(BOX_LINE);
+		System.out.printf("|%s|\n", centerText("Items", BOX_WIDTH));
+		System.out.println(BOX_LINE);
+
+		for (LineItem item : items) {
+			String name = item.getFoodItem().getName();
+			double totalPrice = item.getTotalPrice()+item.getDiscountPrice();
+			int qty = item.getQuantity();
+			String line = String.format("%s x%d", name, qty);
+			printKeyValue(line, String.format("₹%.2f", totalPrice));
+		}
 
 		System.out.println(BOX_LINE);
 
