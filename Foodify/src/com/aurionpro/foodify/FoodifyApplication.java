@@ -18,7 +18,8 @@ public class FoodifyApplication {
 		Foodify.loadInitialData(restaurant, users);
 
 		Foodify.startApp(scanner, users, restaurant);
-
+		//Close the scanner 
 		scanner.close();
 	}
 }
+
